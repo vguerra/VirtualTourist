@@ -17,6 +17,12 @@ class LocationsViewController : UIViewController, MKMapViewDelegate {
     var movingAnnotation : MKPointAnnotation? = nil
     var editMode : Bool = false
     
+    var filePath : String {
+        let manager = NSFileManager.defaultManager()
+        let url = manager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as! NSURL
+        return url.URLByAppendingPathComponent("mapRegionArchive").path!
+    }
+    
     override func viewDidLoad() {
         
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
@@ -27,11 +33,49 @@ class LocationsViewController : UIViewController, MKMapViewDelegate {
         longPressOnMapGesture.minimumPressDuration = 1.5
         locationsMap.delegate = self
         locationsMap.addGestureRecognizer(longPressOnMapGesture)
+        
+        restoreMapRegion(false)
     }
 
     override func setEditing(editing: Bool, animated: Bool) {
-            super.setEditing(editing, animated: animated)
+        println("editing: \(editing)")
+        super.setEditing(editing, animated: animated)
     }
+
+    // MARK: Persistance for the map region
+    func saveMapRegion() {
+        let dictionary = [
+            "latitude" : locationsMap.region.center.latitude,
+            "longitude" : locationsMap.region.center.longitude,
+            "latitudeDelta" : locationsMap.region.span.latitudeDelta,
+            "longitudeDelta" : locationsMap.region.span.longitudeDelta
+        ]
+        
+        NSKeyedArchiver.archiveRootObject(dictionary, toFile: filePath)
+    }
+    
+    func restoreMapRegion(animated: Bool) {
+        
+        // if we can unarchive a dictionary, we will use it to set the map back to its
+        // previous center and span
+        if let regionDictionary = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [String : AnyObject] {
+            
+            let longitude = regionDictionary["longitude"] as! CLLocationDegrees
+            let latitude = regionDictionary["latitude"] as! CLLocationDegrees
+            let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            
+            let longitudeDelta = regionDictionary["latitudeDelta"] as! CLLocationDegrees
+            let latitudeDelta = regionDictionary["longitudeDelta"] as! CLLocationDegrees
+            let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+            
+            let savedRegion = MKCoordinateRegion(center: center, span: span)
+            
+            println("lat: \(latitude), lon: \(longitude), latD: \(latitudeDelta), lonD: \(longitudeDelta)")
+            
+            locationsMap.setRegion(savedRegion, animated: animated)
+        }
+    }
+
 }
 
 
@@ -84,5 +128,10 @@ extension LocationsViewController : MKMapViewDelegate {
             pinView!.annotation = annotation
         }
         return pinView
+    }
+    
+    // Making changes of region on Map persistant
+    func mapView(mapView: MKMapView!, regionDidChangeAnimated animated: Bool) {
+        saveMapRegion()
     }
 }
