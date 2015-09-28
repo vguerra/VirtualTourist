@@ -22,13 +22,13 @@ class CoreDataStackManager {
     lazy var applicationDocumentsDirectory: NSURL = {
         
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as! NSURL
+        return urls[urls.count-1] 
         }()
     
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
         
-        let modelURL = NSBundle.mainBundle().URLForResource("Model", withExtension: "momd")!
+        let modelURL = NSBundle.mainBundle().URLForResource("VirtualTourist", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
         }()
     
@@ -39,19 +39,21 @@ class CoreDataStackManager {
         var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent(SQLITE_FILE_NAME)
         
-        var error: NSError? = nil
+        do {
+            try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)
         
-        if coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil, error: &error) == nil {
+        } catch let error as NSError  {
             coordinator = nil
             // Report any error we got.
-            let dict = NSMutableDictionary()
-            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-            dict[NSLocalizedFailureReasonErrorKey] = "There was an error creating or loading the application's saved data."
-            dict[NSUnderlyingErrorKey] = error
-            error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict as [NSObject : AnyObject])
+            let dict : [NSObject : AnyObject] = [
+                NSLocalizedDescriptionKey : "Failed to initialize the application's saved data",
+                NSLocalizedFailureReasonErrorKey : "There was an error creating or loading the application's saved data.",
+                NSUnderlyingErrorKey : error
+            ]
+            let newError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
             
             // Left in for development development.
-            NSLog("Unresolved error \(error), \(error!.userInfo)")
+            NSLog("Unresolved error \(error), \(newError.userInfo)")
             abort()
         }
         
@@ -73,11 +75,14 @@ class CoreDataStackManager {
     // MARK: - Core Data Saving support
     
     func saveContext () {
-        if let context = self.managedObjectContext {
-            var error: NSError? = nil
-            if context.hasChanges && !context.save(&error) {
-                NSLog("Unresolved error \(error), \(error!.userInfo)")
-                abort()
+        if let hasChanges = self.managedObjectContext?.hasChanges {
+            if hasChanges {
+                do {
+                    try self.managedObjectContext?.save()
+                } catch let error as NSError {
+                    NSLog("Unresolved error \(error), \(error.userInfo)")
+                    abort()
+                }
             }
         }
     }

@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		AE4FC304AB9CDB576D16ED5B /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FCAA0AC897D9D9794D086A5 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B43569621BAE30140045CD24 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43569611BAE30140045CD24 /* ImageCache.swift */; settings = {ASSET_TAGS = (); }; };
+		B43569641BAF3D5F0045CD24 /* Shuffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43569631BAF3D5F0045CD24 /* Shuffle.swift */; settings = {ASSET_TAGS = (); }; };
+		B4461E1A1BABA910000207D0 /* FlickrAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4461E191BABA910000207D0 /* FlickrAPI.swift */; };
+		B487E3C21BA8C23900514510 /* PhotoThumbnailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B487E3C11BA8C23900514510 /* PhotoThumbnailCell.swift */; };
+		B4C8D1F31B96A8F9005915C8 /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C8D1F21B96A8F9005915C8 /* Pin.swift */; };
+		B4C8D1F51B96A91D005915C8 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C8D1F41B96A91D005915C8 /* Photo.swift */; };
 		B4CBA3971B701CA8009E9CAA /* LocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CBA3961B701CA8009E9CAA /* LocationsViewController.swift */; };
 		B4CBA3991B709B2E009E9CAA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4CBA3981B709B2E009E9CAA /* MapKit.framework */; };
 		B4D5AFA11B71EF0B00F5EDA6 /* PhotoAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D5AFA01B71EF0B00F5EDA6 /* PhotoAlbumViewController.swift */; };
@@ -34,6 +40,12 @@
 		06342CF5A83CBC57B49BD0FF /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		8FCAA0AC897D9D9794D086A5 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A84C3B11FCBEAD33CB1303 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		B43569611BAE30140045CD24 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		B43569631BAF3D5F0045CD24 /* Shuffle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shuffle.swift; sourceTree = "<group>"; };
+		B4461E191BABA910000207D0 /* FlickrAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlickrAPI.swift; sourceTree = "<group>"; };
+		B487E3C11BA8C23900514510 /* PhotoThumbnailCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoThumbnailCell.swift; sourceTree = "<group>"; };
+		B4C8D1F21B96A8F9005915C8 /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
+		B4C8D1F41B96A91D005915C8 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		B4CBA3961B701CA8009E9CAA /* LocationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationsViewController.swift; sourceTree = "<group>"; };
 		B4CBA3981B709B2E009E9CAA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		B4D5AFA01B71EF0B00F5EDA6 /* PhotoAlbumViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoAlbumViewController.swift; sourceTree = "<group>"; };
@@ -117,9 +129,15 @@
 				B4DC580C1B7017570031BEAA /* Images.xcassets */,
 				B4DC580E1B7017570031BEAA /* LaunchScreen.xib */,
 				B4DC58041B7017570031BEAA /* VirtualTourist.xcdatamodeld */,
-				B4DC58001B7017570031BEAA /* Supporting Files */,
+				B4C8D1F21B96A8F9005915C8 /* Pin.swift */,
+				B4C8D1F41B96A91D005915C8 /* Photo.swift */,
+				B487E3C11BA8C23900514510 /* PhotoThumbnailCell.swift */,
 				B4CBA3961B701CA8009E9CAA /* LocationsViewController.swift */,
 				B4D5AFA01B71EF0B00F5EDA6 /* PhotoAlbumViewController.swift */,
+				B43569631BAF3D5F0045CD24 /* Shuffle.swift */,
+				B43569611BAE30140045CD24 /* ImageCache.swift */,
+				B4461E191BABA910000207D0 /* FlickrAPI.swift */,
+				B4DC58001B7017570031BEAA /* Supporting Files */,
 			);
 			path = VirtualTourist;
 			sourceTree = "<group>";
@@ -196,7 +214,8 @@
 		B4DC57F51B7017570031BEAA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Victor Guerra";
 				TargetAttributes = {
 					B4DC57FC1B7017570031BEAA = {
@@ -305,9 +324,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B43569621BAE30140045CD24 /* ImageCache.swift in Sources */,
+				B4C8D1F51B96A91D005915C8 /* Photo.swift in Sources */,
+				B487E3C21BA8C23900514510 /* PhotoThumbnailCell.swift in Sources */,
 				B4DC58061B7017570031BEAA /* VirtualTourist.xcdatamodeld in Sources */,
+				B43569641BAF3D5F0045CD24 /* Shuffle.swift in Sources */,
+				B4461E1A1BABA910000207D0 /* FlickrAPI.swift in Sources */,
 				B4DC58031B7017570031BEAA /* AppDelegate.swift in Sources */,
 				B4CBA3971B701CA8009E9CAA /* LocationsViewController.swift in Sources */,
+				B4C8D1F31B96A8F9005915C8 /* Pin.swift in Sources */,
 				B4ECD00C1B7D489800379194 /* CoreDataStackManager.swift in Sources */,
 				B4D5AFA11B71EF0B00F5EDA6 /* PhotoAlbumViewController.swift in Sources */,
 			);
@@ -372,6 +397,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -439,6 +465,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = VirtualTourist/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "vg.blg.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -450,6 +477,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = VirtualTourist/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "vg.blg.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -458,16 +486,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = VirtualTouristTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "vg.blg.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VirtualTourist.app/VirtualTourist";
 			};
@@ -477,12 +502,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
 				INFOPLIST_FILE = VirtualTouristTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "vg.blg.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VirtualTourist.app/VirtualTourist";
 			};

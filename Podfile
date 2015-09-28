@@ -4,7 +4,7 @@
 platform :ios, "8.0"
 use_frameworks!
 
-pod 'Alamofire', '~> 1.3'
+pod 'Alamofire', '~> 2.0'
 
 target 'VirtualTourist' do
 
