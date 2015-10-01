@@ -21,6 +21,9 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     
     @IBOutlet weak var newCollectionButton: UIButton!
     
+    var selectedPhotos : Int {
+        return photoCollectionView.indexPathsForSelectedItems()?.count ?? 0
+    }
     
     lazy var sharedContext: NSManagedObjectContext =  {
         return CoreDataStackManager.sharedInstance.managedObjectContext!
@@ -38,6 +41,10 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     
     // MARK: - Core Data Convenience
     
+    func deletePhotoFromContext(photo photo : Photo) {
+        sharedContext.deleteObject(photo)
+        self.saveContext()
+    }
     func saveContext() {
         CoreDataStackManager.sharedInstance.saveContext()
     }
@@ -109,7 +116,6 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
                 dispatch_async(dispatch_get_main_queue()) {
                     self.photoCollectionView.reloadData()
                 }
-
             }
         } else {
             print("reloading data")
@@ -121,14 +127,27 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    
-    @IBAction func newCollection(sender: AnyObject) {
-        fetchedResultsController.fetchedObjects?.forEach() {
-            sharedContext.deleteObject($0 as! Photo)
-            self.saveContext()
+    func changenButtonTitle(title title: String) {
+        UIView.performWithoutAnimation() {
+            self.newCollectionButton.setTitle(title, forState: .Normal)
+            self.newCollectionButton.layoutIfNeeded()
         }
     }
     
+    @IBAction func newCollection(sender: AnyObject) {
+        if selectedPhotos == 0 {
+            fetchedResultsController.fetchedObjects?.forEach() {
+                deletePhotoFromContext(photo: $0 as! Photo)
+            }
+        } else {
+            let photosToDelete = photoCollectionView.indexPathsForSelectedItems()?.map() {
+                fetchedResultsController.objectAtIndexPath($0) as! Photo
+            }
+            photosToDelete?.forEach() {
+                deletePhotoFromContext(photo: $0)
+            }
+        }
+    }
     // MARK: Conforming to the UICollectionViewDataSource protocol
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -146,23 +165,20 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoThumbnailCell
         cell.toogleSeleted()
+        if selectedPhotos == 1 {
+            changenButtonTitle(title: "Delete selected Photos")
+        }
     }
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoThumbnailCell
         cell.toogleSeleted()
+        if selectedPhotos == 0 {
+            changenButtonTitle(title: "New Collection")
+        }
     }
     
-
     //    MARK: Conforming to NSFetchedResultsControllerDelegate protocol
-    func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        print("will start changes")
-    }
-    
-    func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        print("done w/changes")
-    }
-    
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         switch type {
         case .Delete :
