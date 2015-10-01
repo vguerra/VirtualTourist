@@ -46,16 +46,17 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
         
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         self.navigationItem.title = "Virtual Tourist"
-        
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"OK", style:.Plain, target:nil, action:nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"OK", style:.Plain,
+            target:nil, action:nil)
         
         // MapView configuration
         let longPressOnMapGesture = UILongPressGestureRecognizer(target: self,
             action: "handleLongPressOnMap:")
         longPressOnMapGesture.minimumPressDuration = 1.5
-        locationsMap.delegate = self
         locationsMap.addGestureRecognizer(longPressOnMapGesture)
-        restoreMapRegion(false)
+        locationsMap.delegate = self
+        
+        restoreMapRegion(animated: false)
 
         do {
             try fetchedResultsController.performFetch()
@@ -64,11 +65,14 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
         }
         
         fetchedResultsController.delegate = self
-
-        populateMap()
         
     }
-    
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        populateMap()
+    }
+
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         self.editMode = editing
@@ -110,7 +114,7 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
         NSKeyedArchiver.archiveRootObject(dictionary, toFile: filePath)
     }
     
-    func restoreMapRegion(animated: Bool) {
+    func restoreMapRegion(animated animated: Bool) {
         
         // if we can unarchive a dictionary, we will use it to set the map back to its
         // previous center and span
