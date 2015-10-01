@@ -69,10 +69,6 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
         
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
-
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         self.editMode = editing
@@ -173,7 +169,7 @@ extension LocationsViewController : MKMapViewDelegate {
         }
     }
     
-    func mapView(mapView: MKMapView, didDeselectAnnotationView view: MKAnnotationView) {
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         let pinSelected = view.annotation as! Pin
         if editMode {
             locationsMap.removeAnnotation(pinSelected)
