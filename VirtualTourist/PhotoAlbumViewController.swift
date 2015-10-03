@@ -154,6 +154,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("photoThumbnailCell", forIndexPath: indexPath) as! PhotoThumbnailCell
         cell.photo = fetchedResultsController.objectAtIndexPath(indexPath) as! Photo
+        cell.resetState()
         cell.showImage()
         return cell
     }
@@ -161,7 +162,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     // MARK: Conforming to the UICollectionViewDelegate protocol
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoThumbnailCell
-        cell.toogleSeleted()
+        cell.toggleSelected()
         if selectedPhotos == 1 {
             changenButtonTitle(title: "Delete selected Photos")
         }
@@ -169,7 +170,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     
     func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoThumbnailCell
-        cell.toogleSeleted()
+        cell.toggleSelected()
         if selectedPhotos == 0 {
             changenButtonTitle(title: "New Collection")
         }

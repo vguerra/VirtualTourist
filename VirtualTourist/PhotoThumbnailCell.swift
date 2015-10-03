@@ -54,10 +54,16 @@ class PhotoThumbnailCell : UICollectionViewCell {
         super.init(coder: aDecoder)
     }
     
+    func resetState() {
+        activityView.hidden = true
+        imageView.hidden = true
+        toggleSelected()
+    }
+    
     func showImage() {
         if let image = photo.image {
-            imageView.hidden = false
             imageView.image = image
+            imageView.hidden = false
         } else {
             self.startActivityAnimation(message: "Loading...")
             getPhotoFromURL(url: photo.photoURL!) {
@@ -70,7 +76,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
         }
     }
     
-    func toogleSeleted() {
+    func toggleSelected() {
         self.selectedView.hidden = !self.selected
     }
     
