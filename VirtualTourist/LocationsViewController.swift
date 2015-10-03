@@ -50,14 +50,15 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
             target:nil, action:nil)
         
         // MapView configuration
+
+        restoreMapRegion(animated: false)
+
         let longPressOnMapGesture = UILongPressGestureRecognizer(target: self,
             action: "handleLongPressOnMap:")
         longPressOnMapGesture.minimumPressDuration = 1.5
         locationsMap.addGestureRecognizer(longPressOnMapGesture)
         locationsMap.delegate = self
         
-        restoreMapRegion(animated: false)
-
         do {
             try fetchedResultsController.performFetch()
         } catch _ {
