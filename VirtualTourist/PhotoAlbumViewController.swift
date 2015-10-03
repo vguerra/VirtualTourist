@@ -45,6 +45,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         sharedContext.deleteObject(photo)
         self.saveContext()
     }
+    
     func saveContext() {
         CoreDataStackManager.sharedInstance.saveContext()
     }
@@ -94,32 +95,26 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         super.viewWillAppear(animated)
         
         if self.pin.photos.isEmpty {
-            print("Need to fetch photos")
-            getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude) {
-                photosDicts in
-                
-                print("array of photo dicts has: \(photosDicts.count)")
-                let copyPhotosDicts = photosDicts.shuffle()[0..<15]
-
-                print("but copy has only: \(copyPhotosDicts.count)")
-                
-                print(copyPhotosDicts.count)
-                let _ = copyPhotosDicts.map() {
-                    (dict : [String : String]) -> Photo in
-                    let photo = Photo(dictionary: dict, context: self.sharedContext)
-                    photo.pin = self.pin
-                    return photo
-                }
-                
-                self.saveContext()
-
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.photoCollectionView.reloadData()
-                }
+            fetchPhotosFromFlickr()
+        }
+    }
+    
+    func fetchPhotosFromFlickr() {
+        let photosToShow = 15 - photoCollectionView.numberOfItemsInSection(0)
+        getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude) {
+            photosDicts in
+            
+            let copyPhotosDicts = photosDicts.shuffle()[0..<photosToShow]
+            let _ = copyPhotosDicts.map() {
+                (dict : [String : String]) -> Photo in
+                let photo = Photo(dictionary: dict, context: self.sharedContext)
+                photo.pin = self.pin
+                return photo
             }
-        } else {
-            print("reloading data")
-            print(fetchedResultsController.fetchedObjects?.count)
+            self.saveContext()
+            dispatch_async(dispatch_get_main_queue()) {
+                self.photoCollectionView.reloadData()
+            }
         }
     }
     
@@ -139,6 +134,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
             fetchedResultsController.fetchedObjects?.forEach() {
                 deletePhotoFromContext(photo: $0 as! Photo)
             }
+            fetchPhotosFromFlickr()
         } else {
             let photosToDelete = photoCollectionView.indexPathsForSelectedItems()?.map() {
                 fetchedResultsController.objectAtIndexPath($0) as! Photo
@@ -146,6 +142,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
             photosToDelete?.forEach() {
                 deletePhotoFromContext(photo: $0)
             }
+            changenButtonTitle(title: "New Collection")
         }
     }
     // MARK: Conforming to the UICollectionViewDataSource protocol
