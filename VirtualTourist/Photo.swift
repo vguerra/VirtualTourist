@@ -42,20 +42,26 @@ class Photo : NSManagedObject {
         let entity = NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)!
         super.init(entity: entity, insertIntoManagedObjectContext: context)
         
-        print("creating Photo w/dict: \(dictionary)")
         photoId = dictionary[Keys.PhotoId] as? String
         photoTitle = dictionary[Keys.PhotoTitle] as? String
         photoURL = dictionary[Keys.PhotoURL] as? String
         photoPathInFS = filePathInDocumentsDirectory(self.photoId!)
     }
     
+    override func prepareForDeletion() {
+        super.prepareForDeletion()
+        do {
+            try NSFileManager().removeItemAtPath(photoPathInFS!)
+        } catch let er as NSError {
+            print("there was an error deleting file: \(er)")
+        }
+    }
+    
     var image : UIImage? {
         get {
-            print("getting photo from: \(photoPathInFS)")
             return UIImage(contentsOfFile: photoPathInFS!)
         }
         set {
-            print("saving photo to: \(photoPathInFS)")
             UIImageJPEGRepresentation(newValue!, 1.0)?.writeToFile(photoPathInFS!, atomically: true)
         }
     }

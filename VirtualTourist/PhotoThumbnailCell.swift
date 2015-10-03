@@ -69,6 +69,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
             self.startActivityAnimation(message: "Loading...")
             getPhotoFromURL(url: photo.photoURL!) {
                 image in
+                self.photo.image = image
                 self.imageView.hidden = false
                 self.imageView.image = image
                 self.stopActivityAnimation()
