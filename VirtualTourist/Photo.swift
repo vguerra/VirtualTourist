@@ -9,16 +9,6 @@
 import UIKit
 import CoreData
 
-// TODO: Move to somewhere else
-
-func documentsDirectory() -> String {
-    return NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0]
-}
-
-func filePathInDocumentsDirectory(filename: String) -> String {
-    return documentsDirectory().stringByAppendingString(filename + ".jpg")
-}
-
 class Photo : NSManagedObject {
     
     struct Keys {
@@ -30,9 +20,8 @@ class Photo : NSManagedObject {
     @NSManaged var photoId : String?
     @NSManaged var photoTitle : String?
     @NSManaged var photoURL : String?
-    @NSManaged var photoPathInFS : String?
     @NSManaged var pin : Pin?
-    
+
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
@@ -45,24 +34,31 @@ class Photo : NSManagedObject {
         photoId = dictionary[Keys.PhotoId] as? String
         photoTitle = dictionary[Keys.PhotoTitle] as? String
         photoURL = dictionary[Keys.PhotoURL] as? String
-        photoPathInFS = filePathInDocumentsDirectory(self.photoId!)
     }
     
     override func prepareForDeletion() {
         super.prepareForDeletion()
         do {
-            try NSFileManager().removeItemAtPath(photoPathInFS!)
+            try NSFileManager().removeItemAtPath(photoPathInFS)
         } catch let er as NSError {
-            print("there was an error deleting file: \(er)")
+            print("there was an error deleting associated Photo file: \(er)")
         }
+    }
+    
+    var photoPathInFS : String {
+        let documentsDirectory = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
+        return documentsDirectory.URLByAppendingPathComponent("\(photoId!).jpg").path!
     }
     
     var image : UIImage? {
         get {
-            return UIImage(contentsOfFile: photoPathInFS!)
+            return UIImage(contentsOfFile: photoPathInFS)
         }
         set {
-            UIImageJPEGRepresentation(newValue!, 1.0)?.writeToFile(photoPathInFS!, atomically: true)
+            guard UIImageJPEGRepresentation(newValue!, 1.0)!.writeToFile(photoPathInFS, atomically: false) else {
+                print("saving Photo file in \(photoPathInFS) went wrong")
+                return
+            }
         }
     }
 }
