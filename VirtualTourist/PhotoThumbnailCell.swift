@@ -35,6 +35,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
         activityIndicator.frame = CGRectMake(0, 0, activityView.bounds.size.width, activityView.bounds.size.height)
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.hidden = true
         
         activityLabel = UILabel(frame: CGRectMake(0, 0, 130, 22))
         activityLabel.backgroundColor = UIColor.clearColor()
@@ -57,6 +58,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
     
     func resetState() {
         activityView.hidden = true
+        activityIndicator.hidden = true
         imageView.hidden = true
         toggleSelected()
     }
@@ -86,6 +88,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
         dispatch_async(dispatch_get_main_queue()) {
             self.activityLabel.text = message
             self.activityView.hidden = false
+            self.activityIndicator.hidden = false
             self.activityIndicator.startAnimating()
         }
     }
@@ -94,6 +97,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
         dispatch_async(dispatch_get_main_queue()) {
             self.activityIndicator.stopAnimating()
             self.activityView.hidden = true
+            self.activityIndicator.hidden = false
         }
     }
     
