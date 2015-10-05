@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import CoreData
 
+let downloadIsDone = "com.vguerra.downloadIsDoneKey"
 
 class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
 
@@ -39,6 +40,16 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         return fetchedResultsController
     } ()
     
+    var photosToDownload : Int = 0 {
+        didSet {
+            if oldValue == 0 {
+                newCollectionButton.enabled = false
+            } else if photosToDownload == 0 {
+                newCollectionButton.enabled = true
+            }
+        }
+    }
+    
     // MARK: - Core Data Convenience
     
     func deletePhotoFromContext(photo photo : Photo) {
@@ -58,8 +69,11 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         
         self.navigationItem.title = "Virtual Tourist"
 
+        let viewRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate, 500, 500)
         map.setCenterCoordinate(pin.coordinate, animated: false)
+        map.setRegion(viewRegion, animated: false)
         map.addAnnotation(pin)
+        map.scrollEnabled = false
         
         photoCollectionView.registerClass(PhotoThumbnailCell.self, forCellWithReuseIdentifier: "photoThumbnailCell")
         photoCollectionView.allowsMultipleSelection = true
@@ -71,6 +85,9 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         }
         
         fetchedResultsController.delegate = self
+        
+        // we want to be notified when a download gets done
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "imageDownloadDone", name: downloadIsDone, object: nil)
     }
     
     override func viewDidLayoutSubviews() {
@@ -99,12 +116,17 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         }
     }
     
+    func imageDownloadDone() {
+        self.photosToDownload--
+    }
+    
     func fetchPhotosFromFlickr() {
-        let photosToShow = 15 - photoCollectionView.numberOfItemsInSection(0)
+        // while we download images we dissable the new button
+        photosToDownload = 15 - photoCollectionView.numberOfItemsInSection(0)
         getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude) {
             photosDicts in
             
-            let copyPhotosDicts = photosDicts.shuffle()[0..<photosToShow]
+            let copyPhotosDicts = photosDicts.shuffle()[0..<self.photosToDownload]
             let _ = copyPhotosDicts.map() {
                 (dict : [String : String]) -> Photo in
                 let photo = Photo(dictionary: dict, context: self.sharedContext)
