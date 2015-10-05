@@ -47,10 +47,11 @@ class PhotoThumbnailCell : UICollectionViewCell {
         activityView.addSubview(activityLabel)
         activityView.addSubview(activityIndicator)
         
+
         contentView.addSubview(imageView)
         contentView.addSubview(selectedView)
         contentView.addSubview(activityView)
-        
+
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -76,7 +77,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
                 self.imageView.hidden = false
                 self.imageView.image = image
                 self.stopActivityAnimation()
-                self.stopActivityAnimation()
+                NSNotificationCenter.defaultCenter().postNotificationName(downloadIsDone, object: self)
             }
         }
     }
@@ -101,5 +102,6 @@ class PhotoThumbnailCell : UICollectionViewCell {
             self.activityIndicator.hidden = false
         }
     }
+    
     
 }
