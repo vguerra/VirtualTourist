@@ -26,7 +26,6 @@ class Photo : NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    
     init (dictionary : [String : AnyObject], context : NSManagedObjectContext) {
         let entity = NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)!
         super.init(entity: entity, insertIntoManagedObjectContext: context)
@@ -45,10 +44,10 @@ class Photo : NSManagedObject {
         }
     }
     
-    var photoPathInFS : String {
+    lazy var photoPathInFS : String = {
         let documentsDirectory = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
-        return documentsDirectory.URLByAppendingPathComponent("\(photoId!).jpg").path!
-    }
+        return documentsDirectory.URLByAppendingPathComponent("\(self.photoId!).jpg").path!
+    }()
     
     var image : UIImage? {
         get {
