@@ -22,7 +22,8 @@ class PhotoThumbnailCell : UICollectionViewCell {
         activityView = UIView(frame: CGRectMake(0, 0, frame.size.width, frame.size.height))
         imageView = UIImageView(frame: CGRectMake(0, 0, frame.size.width, frame.size.height))
         imageView.hidden = true
-        imageView.contentMode = .ScaleToFill
+        imageView.contentMode = .ScaleAspectFill
+        imageView.clipsToBounds = true
         
         selectedView = UIView(frame: CGRectMake(0, 0, frame.size.width, frame.size.height))
         selectedView.backgroundColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.5)
