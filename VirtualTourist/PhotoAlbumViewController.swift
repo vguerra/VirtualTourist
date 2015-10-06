@@ -16,6 +16,9 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
 
     var pin : Pin!
     
+    var indexPathsInserted : [NSIndexPath]!
+    var indexPathsDeleted : [NSIndexPath]!
+    
     @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
@@ -42,7 +45,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     
     var photosToDownload : Int = 0 {
         didSet {
-            if oldValue == 0 {
+            if oldValue == 0 && photosToDownload != 0 {
                 newCollectionButton.enabled = false
             } else if photosToDownload == 0 {
                 newCollectionButton.enabled = true
@@ -51,11 +54,6 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     // MARK: - Core Data Convenience
-    
-    func deletePhotoFromContext(photo photo : Photo) {
-        sharedContext.deleteObject(photo)
-        self.saveContext()
-    }
     
     func saveContext() {
         CoreDataStackManager.sharedInstance.saveContext()
@@ -125,7 +123,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         photosToDownload = 15 - photoCollectionView.numberOfItemsInSection(0)
         getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude) {
             photosDicts in
-            
+            print("got \(photosDicts.count) photos in total")
             let copyPhotosDicts = photosDicts.shuffle()[0..<self.photosToDownload]
             let _ = copyPhotosDicts.map() {
                 (dict : [String : String]) -> Photo in
@@ -134,9 +132,6 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
                 return photo
             }
             self.saveContext()
-            dispatch_async(dispatch_get_main_queue()) {
-                self.photoCollectionView.reloadData()
-            }
         }
     }
     
@@ -154,16 +149,18 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     @IBAction func newCollection(sender: AnyObject) {
         if selectedPhotos == 0 {
             fetchedResultsController.fetchedObjects?.forEach() {
-                deletePhotoFromContext(photo: $0 as! Photo)
+                self.sharedContext.deleteObject($0 as! Photo)
             }
+            self.saveContext()
             fetchPhotosFromFlickr()
         } else {
             let photosToDelete = photoCollectionView.indexPathsForSelectedItems()?.map() {
                 fetchedResultsController.objectAtIndexPath($0) as! Photo
             }
             photosToDelete?.forEach() {
-                deletePhotoFromContext(photo: $0)
+                self.sharedContext.deleteObject($0)
             }
+            self.saveContext()
             changenButtonTitle(title: "New Collection")
         }
     }
@@ -182,6 +179,9 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     // MARK: Conforming to the UICollectionViewDelegate protocol
+    
+    
+    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoThumbnailCell
         cell.toggleSelected()
@@ -199,13 +199,26 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     //    MARK: Conforming to NSFetchedResultsControllerDelegate protocol
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        indexPathsInserted = [NSIndexPath]()
+        indexPathsDeleted = [NSIndexPath]()
+    }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        photoCollectionView.performBatchUpdates({
+            self.photoCollectionView.deleteItemsAtIndexPaths(self.indexPathsDeleted)
+            self.photoCollectionView.insertItemsAtIndexPaths(self.indexPathsInserted)
+            }, completion: nil)
+    }
+    
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         switch type {
+        case .Insert :
+            indexPathsInserted.append(newIndexPath!)
         case .Delete :
-            photoCollectionView.deleteItemsAtIndexPaths([indexPath!])
-            break
+            indexPathsDeleted.append(indexPath!)
         default :
-            print("an was added/changed")
+            break
         }
     }
 }
