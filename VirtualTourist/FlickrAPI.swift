@@ -21,8 +21,24 @@ func getPhotoFromURL(url url: String, completionHandler : (image : UIImage) -> V
     
     Alamofire.request(Method.GET, url, parameters: nil, encoding: ParameterEncoding.URL, headers: nil).response() {
         _, _ , data, error in
-        if error == nil {
-            completionHandler(image: UIImage(data: data!)!)
+        
+        switch (data, error) {
+        case (.None, .None):
+            break
+        
+        case let (.Some(data), _):
+            if let img = UIImage(data: data) {
+                completionHandler(image: img)
+            } else {
+                print("problem fetching img @ url \(url)")
+                // probably a good approach would be to re-fetch the image here.
+            }
+            break
+        case let (.None, .Some(error)):
+            print("Got error while fetching image: \(error)")
+            break
+        default:
+            break
         }
     }
 }
