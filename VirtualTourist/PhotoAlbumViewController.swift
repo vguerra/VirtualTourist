@@ -47,7 +47,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         return fetchedResultsController
     } ()
     
-    var photosToDownload : Int = 0 {
+    var photosToDownload : Int = -1 {
         didSet {
             if oldValue == 0 && photosToDownload != 0 {
                 newCollectionButton.enabled = false
@@ -75,7 +75,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         
         self.navigationItem.title = "Virtual Tourist"
 
-        let viewRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate, 500, 500)
+        let viewRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate, 1500, 1500)
         map.setCenterCoordinate(pin.coordinate, animated: false)
         map.setRegion(viewRegion, animated: false)
         map.addAnnotation(pin)
@@ -119,21 +119,27 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         
         if self.pin.photos.isEmpty {
             fetchPhotosFromFlickr()
+        } else {
+            photosToDownload = 0
         }
     }
     
     func imageDownloadDone() {
-        self.photosToDownload--
+        if self.photosToDownload > 0 {
+            self.photosToDownload--
+        }
     }
     
     func fetchPhotosFromFlickr() {
-        // while we download images we dissable the new button
         self.startActivityAnimationWithMessage("Loading Collection...")
         photosToDownload = 15 - photoCollectionView.numberOfItemsInSection(0)
-        getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude) {
+        getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude, count: photosToDownload, shuffle: true) {
             photosDicts in
 
-            self.stopActivityAnimation()
+            defer {
+                self.stopActivityAnimation()
+            }
+            
             if photosDicts.count == 0 {
                 dispatch_async(dispatch_get_main_queue()) {
                     self.photoCollectionView.hidden = true
@@ -143,13 +149,13 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
                 return
             }
             
-            let copyPhotosDicts = photosDicts.shuffle()[0..<self.photosToDownload]
-            let _ = copyPhotosDicts.map() {
+            let _ = photosDicts.map() {
                 (dict : [String : String]) -> Photo in
                 let photo = Photo(dictionary: dict, context: self.sharedContext)
                 photo.pin = self.pin
                 return photo
             }
+            
             self.saveContext()
         }
     }
