@@ -72,7 +72,6 @@ func getPhotosByLocation(latitude latitude: Double, longitude: Double,
                     Photo.Keys.PhotoURL : $0["url_m"]! as! String
                 ]
             }
-            print("photoURLs count: \(photoDicts.count)")
 
             completionHandler(photoDicts)
             
