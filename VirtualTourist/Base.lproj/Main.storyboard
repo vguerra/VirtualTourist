@@ -103,7 +103,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Ax7-1Q-N3L">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Ax7-1Q-N3L">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="150"/>
                                 <animations/>
                             </mapView>
@@ -118,7 +118,7 @@
                                     <action selector="newCollection:" destination="ynF-ck-RJQ" eventType="touchUpInside" id="qfI-1U-Gkl"/>
                                 </connections>
                             </button>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-dN-zEa">
+                            <collectionView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-dN-zEa">
                                 <rect key="frame" x="0.0" y="150" width="600" height="400"/>
                                 <animations/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -147,14 +147,23 @@
                                     <outlet property="delegate" destination="ynF-ck-RJQ" id="NcR-MH-Kw0"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No photos found! 😔" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vn0-ZY-vqb">
+                                <rect key="frame" x="-42" y="-21" width="42" height="21"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Sip-Lh-2S3" firstAttribute="leading" secondItem="di9-mB-Ofa" secondAttribute="leadingMargin" constant="-16" id="A9f-Pg-cJx"/>
+                            <constraint firstItem="Vn0-ZY-vqb" firstAttribute="top" secondItem="Ax7-1Q-N3L" secondAttribute="bottom" constant="63" id="BPs-h9-ToL"/>
                             <constraint firstItem="3l9-dN-zEa" firstAttribute="trailing" secondItem="Ax7-1Q-N3L" secondAttribute="trailing" id="FP1-0v-YFT"/>
                             <constraint firstItem="Ax7-1Q-N3L" firstAttribute="top" secondItem="okP-To-deZ" secondAttribute="bottom" id="ItU-hU-REd"/>
                             <constraint firstItem="3l9-dN-zEa" firstAttribute="leading" secondItem="Ax7-1Q-N3L" secondAttribute="leading" id="dFJ-eH-4Bc"/>
+                            <constraint firstItem="Vn0-ZY-vqb" firstAttribute="centerX" secondItem="di9-mB-Ofa" secondAttribute="centerX" id="dSO-s9-zmU"/>
                             <constraint firstAttribute="trailing" secondItem="Ax7-1Q-N3L" secondAttribute="trailing" id="jFp-ny-AwL"/>
                             <constraint firstItem="L8e-O3-EGf" firstAttribute="top" secondItem="Sip-Lh-2S3" secondAttribute="bottom" id="kbz-NS-9xY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Sip-Lh-2S3" secondAttribute="trailing" constant="-16" id="qAO-xA-SZJ"/>
@@ -166,13 +175,23 @@
                             </constraint>
                         </constraints>
                         <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="Vn0-ZY-vqb"/>
+                            </mask>
                             <mask key="constraints">
                                 <exclude reference="ItU-hU-REd"/>
+                                <exclude reference="BPs-h9-ToL"/>
+                                <exclude reference="dSO-s9-zmU"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="Vn0-ZY-vqb"/>
+                            </mask>
                             <mask key="constraints">
                                 <include reference="ItU-hU-REd"/>
+                                <include reference="BPs-h9-ToL"/>
+                                <include reference="dSO-s9-zmU"/>
                             </mask>
                         </variation>
                     </view>
@@ -180,6 +199,7 @@
                         <outlet property="flowLayout" destination="NAF-ee-FIh" id="MBv-zY-PL1"/>
                         <outlet property="map" destination="Ax7-1Q-N3L" id="rF1-Wo-rX9"/>
                         <outlet property="newCollectionButton" destination="Sip-Lh-2S3" id="xbn-5Y-y15"/>
+                        <outlet property="noPhotosFoundLabel" destination="Vn0-ZY-vqb" id="V97-9o-Jc6"/>
                         <outlet property="photoCollectionView" destination="3l9-dN-zEa" id="6KQ-nl-bGf"/>
                     </connections>
                 </viewController>

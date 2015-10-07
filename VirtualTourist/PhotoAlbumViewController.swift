@@ -15,15 +15,19 @@ let downloadIsDone = "com.vguerra.downloadIsDoneKey"
 class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate {
 
     var pin : Pin!
-    
     var indexPathsInserted : [NSIndexPath]!
     var indexPathsDeleted : [NSIndexPath]!
+    
+    var activityIndicator : UIActivityIndicatorView! = nil
+    var activityView : UIView! = nil
+    var activityLabel : UILabel! = nil
+
     
     @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var photoCollectionView: UICollectionView!
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
-    
     @IBOutlet weak var newCollectionButton: UIButton!
+    @IBOutlet weak var noPhotosFoundLabel: UILabel!
     
     var selectedPhotos : Int {
         return photoCollectionView.indexPathsForSelectedItems()?.count ?? 0
@@ -62,8 +66,12 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     //MARK: View Controller Life cycle
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
+        
+        setUpUIElements()
+        
+        photoCollectionView.hidden = false
+        noPhotosFoundLabel.hidden = true
         
         self.navigationItem.title = "Virtual Tourist"
 
@@ -120,10 +128,21 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     
     func fetchPhotosFromFlickr() {
         // while we download images we dissable the new button
+        self.startActivityAnimationWithMessage("Loading Collection...")
         photosToDownload = 15 - photoCollectionView.numberOfItemsInSection(0)
         getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude) {
             photosDicts in
-            print("got \(photosDicts.count) photos in total")
+
+            self.stopActivityAnimation()
+            if photosDicts.count == 0 {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.photoCollectionView.hidden = true
+                    self.noPhotosFoundLabel.hidden = false
+                    self.newCollectionButton.enabled = true
+                }
+                return
+            }
+            
             let copyPhotosDicts = photosDicts.shuffle()[0..<self.photosToDownload]
             let _ = copyPhotosDicts.map() {
                 (dict : [String : String]) -> Photo in
@@ -147,6 +166,9 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func newCollection(sender: AnyObject) {
+        self.noPhotosFoundLabel.hidden = true
+        self.photoCollectionView.hidden = false
+        
         if selectedPhotos == 0 {
             fetchedResultsController.fetchedObjects?.forEach() {
                 self.sharedContext.deleteObject($0 as! Photo)
@@ -221,4 +243,49 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
             break
         }
     }
+    
+    // MARK: Activity animation code
+    
+    func setUpUIElements() {
+        let sideLength:CGFloat = 170.0
+        activityView = UIView(frame: CGRectMake(self.view.bounds.width/2 - sideLength/2,
+            self.view.bounds.height/2 - sideLength/2, sideLength, sideLength))
+        activityView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7)
+        activityView.clipsToBounds = true;
+        activityView.layer.cornerRadius = 10.0;
+        activityView.hidden = true
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        activityIndicator.frame = CGRectMake(0, 0, activityView.bounds.size.width, activityView.bounds.size.height)
+        activityIndicator.hidesWhenStopped = true
+        
+        
+        
+        activityLabel = UILabel(frame: CGRectMake(20, 115, 130, 22))
+        activityLabel.backgroundColor = UIColor.clearColor()
+        activityLabel.textColor = UIColor.whiteColor()
+        activityLabel.adjustsFontSizeToFitWidth = true
+        activityLabel.textAlignment = NSTextAlignment.Center
+        
+        activityView.addSubview(activityLabel)
+        activityView.addSubview(activityIndicator)
+        self.view.addSubview(activityView)
+    }
+
+    func startActivityAnimationWithMessage(message: String) {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.activityLabel.text = message
+            self.activityView.hidden = false
+            self.activityIndicator.startAnimating()
+        }
+    }
+    
+    func stopActivityAnimation() {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.activityIndicator.stopAnimating()
+            self.activityView.hidden = true
+        }
+    }
+
+    
+    
 }
