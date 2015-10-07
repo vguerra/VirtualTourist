@@ -44,7 +44,7 @@ func getPhotoFromURL(url url: String, completionHandler : (image : UIImage) -> V
 }
 
 
-func getPhotosByLocation(latitude latitude: Double, longitude: Double,
+func getPhotosByLocation(latitude latitude: Double, longitude: Double, count: Int, shuffle: Bool,
     completionHandler : ([[String : String]]) -> Void) {
     
     let URLparameters = [
@@ -66,13 +66,16 @@ func getPhotosByLocation(latitude latitude: Double, longitude: Double,
         case .Success(let parsedResult):
             let results = parsedResult["photos"] as! [String : AnyObject]
             let photos = results["photo"] as! [[String : AnyObject]]
-            let photoDicts = photos.map() {
+            var photoDicts = photos.map() {
                 return [Photo.Keys.PhotoId : $0["id"] as! String,
                     Photo.Keys.PhotoTitle : $0["title"]! as! String,
                     Photo.Keys.PhotoURL : $0["url_m"]! as! String
                 ]
             }
-
+            if shuffle {
+                photoDicts.shuffleInPlace()
+            }
+            photoDicts = Array(photoDicts[0..<count])
             completionHandler(photoDicts)
             
         case .Failure(_, let error):
