@@ -168,6 +168,7 @@ extension LocationsViewController : MKMapViewDelegate {
             
         case .Ended :
             CoreDataStackManager.sharedInstance.saveContext()
+            fetchAlbumForPin(pinToSave!)
             
         default:
             break
@@ -177,7 +178,6 @@ extension LocationsViewController : MKMapViewDelegate {
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         let pinSelected = view.annotation as! Pin
         if editMode {
-            locationsMap.removeAnnotation(pinSelected)
             sharedContext.deleteObject(pinSelected)
             CoreDataStackManager.sharedInstance.saveContext()
         } else {
@@ -199,26 +199,41 @@ extension LocationsViewController : MKMapViewDelegate {
     }
     
     // Making changes of region on Map persistant
+    
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         saveMapRegion()
     }
     
     
     // MARK: Conforming NSFetchedResultsControllerDelegate
-    // IS THIS REALLY NEEDED???!!!
     
-//    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-//        
-//        switch type  {
-//        case .Insert:
-//            print("we inserted an object")
-//        case .Update:
-//            print("we updated an object")
-//        case .Move:
-//            print("we moved an object")
-//        case .Delete:
-//            print("Getting message that we deleted an object")
-//            locationsMap.removeAnnotation(anObject as! Pin)
-//        }
-//    }
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        
+        switch type  {
+        case .Delete:
+            locationsMap.removeAnnotation(anObject as! Pin)
+        default:
+            break
+        }
+    }
+    
+    // MARK: Fetching album asyncrhounously
+    func fetchAlbumForPin(pin: Pin) {
+        let global_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
+        dispatch_async(global_queue) {
+            getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude,
+                count: 15, shuffle: true) {
+                    photosDicts in
+                    
+                    let _ = photosDicts.map() {
+                        (dict : [String : String]) -> Photo in
+                        let photo = Photo(dictionary: dict, context: self.sharedContext)
+                        photo.pin = pin
+                        return photo
+                    }
+                    CoreDataStackManager.sharedInstance.saveContext()
+            }
+            
+        }
+    }
 }
