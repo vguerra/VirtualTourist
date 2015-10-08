@@ -44,9 +44,9 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
 
         super.viewDidLoad()
         
-        self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        self.navigationItem.title = "Virtual Tourist"
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title:"OK", style:.Plain,
+        navigationItem.rightBarButtonItem = editButtonItem()
+        navigationItem.title = "Virtual Tourist"
+        navigationItem.backBarButtonItem = UIBarButtonItem(title:"OK", style:.Plain,
             target:nil, action:nil)
         
         // MapView configuration
@@ -76,7 +76,7 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
 
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        self.editMode = editing
+        editMode = editing
         toggleDeletePinsLabel(editing, animated: animated)
     }
 
@@ -97,7 +97,6 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
         
         UIView.animateWithDuration(animationDuration) {
             let labelHeight = self.deletePinsLabel.frame.height
-//            self.deletePinsLabel.frame = CGRectOffset(self.deletePinsLabel.frame, 0.0, hideShowFactor*labelHeight)
             self.locationsMap.frame.size.height += hideShowFactor*labelHeight
         }
     }
@@ -152,9 +151,9 @@ class LocationsViewController : UIViewController, NSFetchedResultsControllerDele
 extension LocationsViewController : MKMapViewDelegate {
 
     func handleLongPressOnMap(gestureRecognizer : UIGestureRecognizer){
-        let touchPoint = gestureRecognizer.locationInView(self.locationsMap)
-        let touchMapCoordinate = self.locationsMap.convertPoint(touchPoint,
-            toCoordinateFromView: self.locationsMap)
+        let touchPoint = gestureRecognizer.locationInView(locationsMap)
+        let touchMapCoordinate = locationsMap.convertPoint(touchPoint,
+            toCoordinateFromView: locationsMap)
         switch gestureRecognizer.state {
         case .Began :
             let pinInfo = [Pin.Keys.Latitude : touchMapCoordinate.latitude,
@@ -181,7 +180,7 @@ extension LocationsViewController : MKMapViewDelegate {
             sharedContext.deleteObject(pinSelected)
             CoreDataStackManager.sharedInstance.saveContext()
         } else {
-            self.performSegueWithIdentifier("showPhotoAlbum", sender: pinSelected)
+            performSegueWithIdentifier("showPhotoAlbum", sender: pinSelected)
         }
     }
 

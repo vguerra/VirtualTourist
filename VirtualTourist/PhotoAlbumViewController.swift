@@ -73,7 +73,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
         photoCollectionView.hidden = false
         noPhotosFoundLabel.hidden = true
         
-        self.navigationItem.title = "Virtual Tourist"
+        navigationItem.title = "Virtual Tourist"
 
         let viewRegion = MKCoordinateRegionMakeWithDistance(pin.coordinate, 1500, 1500)
         map.setCenterCoordinate(pin.coordinate, animated: false)
@@ -117,7 +117,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        if self.pin.photos.isEmpty {
+        if pin.photos.isEmpty {
             fetchPhotosFromFlickr()
         } else {
             photosToDownload = 0
@@ -125,13 +125,13 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     func imageDownloadDone() {
-        if self.photosToDownload > 0 {
-            self.photosToDownload--
+        if photosToDownload > 0 {
+            photosToDownload--
         }
     }
     
     func fetchPhotosFromFlickr() {
-        self.startActivityAnimationWithMessage("Loading Collection...")
+        startActivityAnimationWithMessage("Loading Collection...")
         photosToDownload = 15 - photoCollectionView.numberOfItemsInSection(0)
         getPhotosByLocation(latitude: pin.latitude, longitude: pin.longitude, count: photosToDownload, shuffle: true) {
             photosDicts in
@@ -161,7 +161,7 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     func goBack() {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     func changenButtonTitle(title title: String) {
@@ -172,26 +172,27 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func newCollection(sender: AnyObject) {
-        self.noPhotosFoundLabel.hidden = true
-        self.photoCollectionView.hidden = false
+        noPhotosFoundLabel.hidden = true
+        photoCollectionView.hidden = false
         
         if selectedPhotos == 0 {
             fetchedResultsController.fetchedObjects?.forEach() {
-                self.sharedContext.deleteObject($0 as! Photo)
+                sharedContext.deleteObject($0 as! Photo)
             }
-            self.saveContext()
+            saveContext()
             fetchPhotosFromFlickr()
         } else {
             let photosToDelete = photoCollectionView.indexPathsForSelectedItems()?.map() {
                 fetchedResultsController.objectAtIndexPath($0) as! Photo
             }
             photosToDelete?.forEach() {
-                self.sharedContext.deleteObject($0)
+                sharedContext.deleteObject($0)
             }
-            self.saveContext()
+            saveContext()
             changenButtonTitle(title: "New Collection")
         }
     }
+    
     // MARK: Conforming to the UICollectionViewDataSource protocol
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -207,8 +208,6 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     }
     
     // MARK: Conforming to the UICollectionViewDelegate protocol
-    
-    
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PhotoThumbnailCell
@@ -254,8 +253,8 @@ class PhotoAlbumViewController : UIViewController, NSFetchedResultsControllerDel
     
     func setUpUIElements() {
         let sideLength:CGFloat = 170.0
-        activityView = UIView(frame: CGRectMake(self.view.bounds.width/2 - sideLength/2,
-            self.view.bounds.height/2 - sideLength/2, sideLength, sideLength))
+        activityView = UIView(frame: CGRectMake(view.bounds.width/2 - sideLength/2,
+            view.bounds.height/2 - sideLength/2, sideLength, sideLength))
         activityView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7)
         activityView.clipsToBounds = true;
         activityView.layer.cornerRadius = 10.0;

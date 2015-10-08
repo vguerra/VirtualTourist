@@ -79,7 +79,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
             imageView.image = image
             imageView.hidden = false
         } else {
-            self.startActivityAnimation(message: "Loading...")
+            startActivityAnimation(message: "Loading...")
             getPhotoFromURL(url: photo.photoURL!) {
                 image in
                 self.photo.image = image
@@ -92,7 +92,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
     }
     
     func toggleSelected() {
-        self.selectedView.hidden = !self.selected
+        selectedView.hidden = !self.selected
     }
     
     func startActivityAnimation(message message: String) {
