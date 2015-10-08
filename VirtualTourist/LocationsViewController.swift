@@ -228,11 +228,22 @@ extension LocationsViewController : MKMapViewDelegate {
                         (dict : [String : String]) -> Photo in
                         let photo = Photo(dictionary: dict, context: self.sharedContext)
                         photo.pin = pin
+                        self.fetchImageDataForPhoto(photo)
                         return photo
                     }
                     CoreDataStackManager.sharedInstance.saveContext()
             }
             
+        }
+    }
+    
+    func fetchImageDataForPhoto(photo: Photo) {
+        let global_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
+        dispatch_async(global_queue) {
+            
+            getPhotoFromURL(url: photo.photoURL!) { img in
+                photo.image = img
+            }
         }
     }
 }
