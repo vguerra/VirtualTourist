@@ -9,6 +9,12 @@
 import UIKit
 import CoreData
 
+
+//Photo class holds information about a photo downloaded from Flickr.
+//It has an id, title and the url needed to download the photo it self.
+//All these fields are taken from the information asociated with the photo
+//on the flickr DB.
+
 class Photo : NSManagedObject {
     
     struct Keys {

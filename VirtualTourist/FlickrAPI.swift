@@ -9,6 +9,8 @@
 import Alamofire
 import UIKit
 
+// Interaction with Flickr API on top of Alamofire. 
+
 let LAT_MIN = -90.0
 let LAT_MAX = 90.0
 let LON_MIN = -180.0
@@ -17,6 +19,7 @@ let BOX_HALF_SIZE = 1.0
 
 let API_KEY = "ce1320875796d2144601f359b5410d43"
 
+// Get a photo data given a URL
 func getPhotoFromURL(url url: String, completionHandler : (image : UIImage) -> Void) {
     
     Alamofire.request(Method.GET, url, parameters: nil, encoding: ParameterEncoding.URL, headers: nil).response() {
@@ -43,6 +46,8 @@ func getPhotoFromURL(url url: String, completionHandler : (image : UIImage) -> V
     }
 }
 
+// Get photos for a given location. The results can be shuffled and sliced
+// in order the reduce the number of pictures passed to the caller.
 
 func getPhotosByLocation(latitude latitude: Double, longitude: Double, count: Int, shuffle: Bool,
     completionHandler : ([[String : String]]) -> Void) {

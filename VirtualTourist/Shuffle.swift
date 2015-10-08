@@ -7,6 +7,7 @@
 //
 
 // Borrowed from https://gist.github.com/natecook1000/0ac03efe07f647b46dae
+// with a small fix to avoid swap between the same elements
 
 import Foundation
 

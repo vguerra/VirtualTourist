@@ -8,6 +8,12 @@
 
 import UIKit
 
+// PhotoTumbnailCell represents a photo in the collection view.
+// This class contains the logic for displaying and downloading 
+// a photo in case it is needed ( when not found in the file system )
+// The PhotoAlbumViewCOntroller is as well notified by this class 
+// when a photo has been downloaded successfuly.
+
 class PhotoThumbnailCell : UICollectionViewCell {
     var activityIndicator : UIActivityIndicatorView!
     var activityView : UIView!
@@ -16,6 +22,7 @@ class PhotoThumbnailCell : UICollectionViewCell {
     var activityLabel : UILabel!
     var photo : Photo!
     
+    // MARK: View Life cycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -57,6 +64,8 @@ class PhotoThumbnailCell : UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
+    // MARK: Managing state of the cell
     
     func resetState() {
         activityView.hidden = true

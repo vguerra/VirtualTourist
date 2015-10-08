@@ -10,6 +10,10 @@ import UIKit
 import CoreData
 import MapKit
 
+//Pin class represents an annotation done by the user
+//in the map. It has associated an album of pictures, (15)
+//by default, that will be downloaded from the internet.
+
 class Pin : NSManagedObject, MKAnnotation {
 
     struct Keys {
