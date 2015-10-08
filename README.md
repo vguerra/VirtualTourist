@@ -1,1 +1,1 @@
-Open VirtualTourist.xcworkspace
+Please open VirtualTourist.xcworkspace
