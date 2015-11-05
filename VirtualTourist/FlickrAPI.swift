@@ -63,31 +63,29 @@ func getPhotosByLocation(latitude latitude: Double, longitude: Double, count: In
         "per_page" : "500",
         "page" : "1"
     ]
-    
-    Alamofire.request(Method.GET, "https://api.flickr.com/services/rest/", parameters: URLparameters, encoding: ParameterEncoding.URL, headers: nil).responseJSON() { _, _, data in
         
-        switch data {
-        
-        case .Success(let parsedResult):
-            let results = parsedResult["photos"] as! [String : AnyObject]
-            let photos = results["photo"] as! [[String : AnyObject]]
-            var photoDicts = photos.map() {
-                return [Photo.Keys.PhotoId : $0["id"] as! String,
-                    Photo.Keys.PhotoTitle : $0["title"]! as! String,
-                    Photo.Keys.PhotoURL : $0["url_m"]! as! String
-                ]
-            }
-            if shuffle {
-                photoDicts.shuffleInPlace()
-            }
-            photoDicts = Array(photoDicts[0..<count])
-            completionHandler(photoDicts)
+        Alamofire.request(.GET, "https://api.flickr.com/services/rest/", parameters: URLparameters, encoding: ParameterEncoding.URL, headers: nil).responseJSON {
+            response in
             
-        case .Failure(_, let error):
-            print("Request failed w/error: \(error)")
+            if let error = response.result.error {
+                print("Request to flickr API failed w/error: \(error)")
+            } else {
+                let results = response.result.value!["photos"] as! [String : AnyObject]
+                let photos = results["photo"] as! [[String : AnyObject]]
+                var photoDicts = photos.map() {
+                    return [Photo.Keys.PhotoId : $0["id"] as! String,
+                        Photo.Keys.PhotoTitle : $0["title"]! as! String,
+                        Photo.Keys.PhotoURL : $0["url_m"]! as! String
+                    ]
+                }
+                if shuffle {
+                    photoDicts.shuffleInPlace()
+                }
+                photoDicts = Array(photoDicts[0..<count])
+                completionHandler(photoDicts)
+            }
+        
         }
-    }
-    
 }
 
 func computeBBox(latitude latitude: Double, longitude: Double) -> String {

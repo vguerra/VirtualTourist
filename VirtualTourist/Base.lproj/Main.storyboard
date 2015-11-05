@@ -179,9 +179,9 @@
                                 <exclude reference="Vn0-ZY-vqb"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="ItU-hU-REd"/>
                                 <exclude reference="BPs-h9-ToL"/>
                                 <exclude reference="dSO-s9-zmU"/>
+                                <exclude reference="ItU-hU-REd"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
@@ -189,9 +189,9 @@
                                 <include reference="Vn0-ZY-vqb"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="ItU-hU-REd"/>
                                 <include reference="BPs-h9-ToL"/>
                                 <include reference="dSO-s9-zmU"/>
+                                <include reference="ItU-hU-REd"/>
                             </mask>
                         </variation>
                     </view>
